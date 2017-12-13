@@ -14,6 +14,7 @@ class RelationshipDeltaEncoding implements RelationshipVisitor<EntityNotFoundExc
     private Direction direction;
 
     private long prevTarget;
+    private long prevNode;
     private boolean isSorted;
 
     int length;
@@ -32,6 +33,7 @@ class RelationshipDeltaEncoding implements RelationshipVisitor<EntityNotFoundExc
         this.sourceGraphId = sourceGraphId;
         length = 0;
         prevTarget = -1L;
+        prevNode = -1L;
         isSorted = true;
         if (targets.length < degree) {
             targets = new long[ArrayUtil.oversize(degree, Long.BYTES)];
@@ -56,6 +58,9 @@ class RelationshipDeltaEncoding implements RelationshipVisitor<EntityNotFoundExc
     long maybeVisit(
             final long relationshipId,
             final long endNodeId) throws EntityNotFoundException {
+        if (endNodeId == prevNode) {
+            return prevTarget;
+        }
         long targetId = idMap.toHugeMappedNodeId(endNodeId);
         if (targetId == -1L) {
             return -1L;
@@ -64,7 +69,10 @@ class RelationshipDeltaEncoding implements RelationshipVisitor<EntityNotFoundExc
         if (isSorted && targetId < prevTarget) {
             isSorted = false;
         }
-        return prevTarget = targets[length++] = targetId;
+        targets[length++] = targetId;
+        prevNode = endNodeId;
+        prevTarget = targetId;
+        return targetId;
     }
 
     final long applyDelta() {
