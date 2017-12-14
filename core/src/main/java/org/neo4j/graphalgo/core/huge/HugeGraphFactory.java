@@ -90,12 +90,10 @@ public final class HugeGraphFactory extends GraphFactory {
         if (setup.loadIncoming) {
             inOffsets = LongArray.newArray(nodeCount, tracker);
             inAdjacency = ByteArray.newArray(0, tracker);
-            inAdjacency.skipAllocationRegion(1);
         }
         if (setup.loadOutgoing) {
             outOffsets = LongArray.newArray(nodeCount, tracker);
             outAdjacency = ByteArray.newArray(nodeCount, tracker);
-            outAdjacency.skipAllocationRegion(1);
         }
         if (setup.loadIncoming || setup.loadOutgoing) {
             // needs final b/c of reference from lambda
@@ -148,7 +146,6 @@ public final class HugeGraphFactory extends GraphFactory {
 
         LongArray offsets = LongArray.newArray(nodeCount, tracker);
         ByteArray adjacency = ByteArray.newArray(0, tracker);
-        adjacency.skipAllocationRegion(1);
 
         NodeQueue nodes = new NodeQueue(nodeCount);
         HugeRelationshipImporter[] tasks = new HugeRelationshipImporter[concurrency];

@@ -71,6 +71,7 @@ final class HugeRelationshipImporter extends StatementTask<Void, EntityNotFoundE
             assert outOffsets != null;
             assert outAllocator != null;
 
+            outAllocator.prepare();
             RelationshipDeltaEncoding importer = newImporter(readOp, Direction.BOTH);
             loader = (neo, node) -> readUndirectedRelationships(
                     node,
@@ -83,8 +84,10 @@ final class HugeRelationshipImporter extends StatementTask<Void, EntityNotFoundE
         } else {
 
             if (inAllocator != null) {
+                inAllocator.prepare();
                 RelationshipDeltaEncoding inImporter = newImporter(readOp, Direction.INCOMING);
                 if (outAllocator != null) {
+                    outAllocator.prepare();
                     RelationshipDeltaEncoding outImporter = newImporter(readOp, Direction.OUTGOING);
                     loader = (neo, node) -> {
                         readRelationships(
@@ -119,6 +122,7 @@ final class HugeRelationshipImporter extends StatementTask<Void, EntityNotFoundE
                 }
             } else {
                 if (outAllocator != null) {
+                    outAllocator.prepare();
                     RelationshipDeltaEncoding outImporter = newImporter(readOp, Direction.OUTGOING);
                     loader = (neo, node) -> readRelationships(
                             node,
