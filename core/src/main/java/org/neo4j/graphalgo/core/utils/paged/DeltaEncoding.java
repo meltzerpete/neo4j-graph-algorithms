@@ -17,8 +17,7 @@ public final class DeltaEncoding {
         return encodingSizeCache[bits];
     }
 
-    public static int encodeInt(int value, byte[] array, int pageOffset) {
-        int offset = pageOffset;
+    public static int encodeInt(int value, byte[] array, int offset) {
         array[offset++] = (byte) (value >>> 24);
         array[offset++] = (byte) (value >>> 16);
         array[offset++] = (byte) (value >>> 8);
@@ -26,15 +25,11 @@ public final class DeltaEncoding {
         return offset;
     }
 
-    public static int encodeVLong(long value, byte[] array, int pageOffset) {
+    public static int encodeVLong(long value, byte[] array, int offset) {
         long i = value;
-        int offset = pageOffset;
         while ((i & ~0x7FL) != 0L) {
             array[offset++] = (byte) ((i & 0x7FL) | 0x80L);
             i >>>= 7L;
-        }
-        if (offset >= array.length) {
-            System.out.println("value = " + value + " calculated = " + vSize(value) + " started at " + pageOffset + " with length " + array.length);
         }
         array[offset++] = (byte) i;
         return offset;
