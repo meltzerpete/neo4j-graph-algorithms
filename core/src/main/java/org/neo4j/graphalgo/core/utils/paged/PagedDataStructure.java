@@ -18,8 +18,6 @@
  */
 package org.neo4j.graphalgo.core.utils.paged;
 
-import org.apache.lucene.util.ArrayUtil;
-
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
@@ -141,10 +139,7 @@ public class PagedDataStructure<T> {
                 growSize(newSize);
                 return;
             }
-            int numPages = ArrayUtil.oversize(
-                numPages(newSize),
-                MemoryUsage.BYTES_OBJECT_REF);
-            setPages(numPages, this.pages.length, skipPage);
+            setPages(numPages(newSize), this.pages.length, skipPage);
             growSize(newSize);
         } finally {
             growLock.unlock();
